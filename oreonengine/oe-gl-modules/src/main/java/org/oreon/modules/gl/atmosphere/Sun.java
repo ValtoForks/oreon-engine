@@ -1,20 +1,20 @@
 package org.oreon.modules.gl.atmosphere;
 
+import org.oreon.core.context.EngineContext;
 import org.oreon.core.gl.buffers.GLPointVBO3D;
-import org.oreon.core.gl.config.AlphaBlendingSrcAlpha;
 import org.oreon.core.gl.light.GLDirectionalLight;
+import org.oreon.core.gl.parameter.AlphaBlendingSrcAlpha;
 import org.oreon.core.gl.query.GLOcclusionQuery;
+import org.oreon.core.gl.scenegraph.GLRenderInfo;
 import org.oreon.core.gl.texture.Texture2D;
 import org.oreon.core.light.Light;
 import org.oreon.core.light.LightHandler;
 import org.oreon.core.math.Vec3f;
 import org.oreon.core.model.Material;
-import org.oreon.core.renderer.RenderInfo;
-import org.oreon.core.renderer.Renderer;
-import org.oreon.core.scene.GameObject;
-import org.oreon.core.system.CoreSystem;
+import org.oreon.core.scenegraph.ComponentType;
+import org.oreon.core.scenegraph.Renderable;
 
-public class Sun extends GameObject{
+public class Sun extends Renderable{
 	
 	public Sun(){
 		
@@ -36,21 +36,22 @@ public class Sun extends GameObject{
 		material2.getDiffusemap().bind();
 		material2.getDiffusemap().trilinearFilter();
 		
-		Renderer renderer = new Renderer(buffer);
-		renderer.setRenderInfo(new RenderInfo(new AlphaBlendingSrcAlpha(),SunShader.getInstance()));
-		addComponent("Renderer", renderer);
-		addComponent("Material1", material1);
-		addComponent("Material2", material2);
+		GLRenderInfo renderInfo = new GLRenderInfo(SunShader.getInstance(),
+											   new AlphaBlendingSrcAlpha(),
+											   buffer);
+		addComponent(ComponentType.MAIN_RENDERINFO, renderInfo);
+		addComponent(ComponentType.MATERIAL0, material1);
+		addComponent(ComponentType.MATERIAL1, material2);
 		
 		Light light = new Light();
 		light.setOcclusionQuery(new GLOcclusionQuery());
-		addComponent("Light", light);
+		addComponent(ComponentType.LIGHT, light);
 		LightHandler.getLights().add(light);
 	}
 	
 	public void render() {
 		
-		if (!CoreSystem.getInstance().getRenderEngine().isCameraUnderWater() && !CoreSystem.getInstance().getRenderEngine().isGrid()){
+		if (!EngineContext.getConfig().isUnderwater() && !EngineContext.getConfig().isWireframe()){
 			super.render();
 		}
 	}

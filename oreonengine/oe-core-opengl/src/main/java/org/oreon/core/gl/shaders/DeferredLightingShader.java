@@ -3,8 +3,8 @@ package org.oreon.core.gl.shaders;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE1;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
+import org.oreon.core.context.EngineContext;
 import org.oreon.core.gl.texture.Texture2DArray;
-import org.oreon.core.system.CoreSystem;
 import org.oreon.core.util.Constants;
 import org.oreon.core.util.ResourceLoader;
 
@@ -42,7 +42,7 @@ public class DeferredLightingShader extends GLShader{
 		bindUniformBlock("Camera", Constants.CameraUniformBlockBinding);
 		bindUniformBlock("DirectionalLight", Constants.DirectionalLightUniformBlockBinding);	
 		bindUniformBlock("LightViewProjections",Constants.LightMatricesUniformBlockBinding);
-		setUniformf("sightRangeFactor", CoreSystem.getInstance().getRenderEngine().getSightRangeFactor());
+		setUniformf("sightRangeFactor", EngineContext.getConfig().getSightRange());
 		
 		glActiveTexture(GL_TEXTURE1);
 		pssm.bind();
@@ -50,6 +50,6 @@ public class DeferredLightingShader extends GLShader{
 		
 		setUniformi("flag", flag ? 1 : 0);
 		
-		setUniformi("numSamples", Constants.MULTISAMPLES);
+		setUniformi("numSamples", EngineContext.getConfig().getMultisamples());
 	}
 }

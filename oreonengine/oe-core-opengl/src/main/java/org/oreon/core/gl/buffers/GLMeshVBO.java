@@ -6,7 +6,6 @@ import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
 
-import org.oreon.core.buffers.VBO;
 import org.oreon.core.model.Mesh;
 import org.oreon.core.model.Vertex;
 import org.oreon.core.util.BufferUtil;
@@ -43,17 +42,6 @@ public class GLMeshVBO implements VBO{
 		vaoId = glGenVertexArrays();
 		size = 0;
 		instances = new IntegerReference();
-	}
-	
-	public GLMeshVBO(GLMeshVBO copy)
-	{
-		vbo = copy.vbo;
-		ibo = copy.ibo;
-		vaoId = copy.vaoId;
-		size = copy.size;
-		hasTangentsBitangents = copy.hasTangentsBitangents;
-		isInstanced = copy.isInstanced;
-		instances = copy.instances;
 	}
 	
 	public void addData(Mesh mesh)

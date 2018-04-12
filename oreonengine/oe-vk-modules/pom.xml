@@ -3,11 +3,11 @@
   
 	<parent>
 	 	<groupId>org.oreon</groupId>
-	 	<artifactId>oe-main</artifactId>
-	 	<version>3.0.0</version>
+	 	<artifactId>oreon-engine</artifactId>
+	 	<version>${oreon.version}</version>
 	</parent>
 	
-	<groupId>org.oreon.module</groupId>
+	<groupId>org.oreon.vk</groupId>
 	<artifactId>oe-vk-modules</artifactId>
 	<packaging>jar</packaging>
 	

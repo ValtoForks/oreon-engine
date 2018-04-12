@@ -1,33 +1,39 @@
 package org.oreon.core.system;
 
-import org.oreon.core.buffers.Framebuffer;
-import org.oreon.core.math.Quaternion;
-import org.oreon.core.texture.Texture;
+import org.oreon.core.platform.Camera;
+import org.oreon.core.platform.Window;
+import org.oreon.core.scenegraph.Scenegraph;
 
-public interface RenderEngine {
+import lombok.Getter;
 
-	public void init();
-	public void render();
-	public void update();
-	public void shutdown();
+public abstract class RenderEngine {
+
+	@Getter
+	protected Scenegraph sceneGraph;
 	
-	public boolean isGrid();
-	public boolean isCameraUnderWater();
-	public boolean isWaterReflection();
-	public boolean isWaterRefraction();
-	public boolean isBloomEnabled();
+	protected Window window;
+	protected Camera camera;
 	
-	public Framebuffer getMultisampledFbo();
-	public Framebuffer getDeferredFbo();
-	public Texture getSceneDepthmap();
-	public Quaternion getClipplane();
-	public float getSightRangeFactor();
-	public Object getUnderwater();
+	public void init(){
+		
+		sceneGraph = new Scenegraph();
+	}
+	public abstract void render();
 	
-	public void setClipplane(Quaternion plane);
-	public void setGrid(boolean flag);
-	public void setWaterRefraction(boolean flag);
-	public void setWaterReflection(boolean flag);
-	public void setCameraUnderWater(boolean flag);	
-	public void setSightRangeFactor(float range);
+	public void update(){
+		
+		sceneGraph.update();
+		camera.update();
+	}
+	
+	public void shutdown(){
+		
+		// important to shutdown scenegraph before render-engine, since
+		// thread safety of instancing clusters.
+		// scenegraph sets isRunning to false, render-engine signals all
+		// waiting threads to shutdown
+		
+		sceneGraph.shutdown();
+	}
+	
 }

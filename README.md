@@ -6,13 +6,20 @@ As OpenGL and Vulkan Binding for Java the [LWJGL 3](https://www.lwjgl.org/) API 
 Documentation: http://oreonengine.github.io/oreon-engine
 
 ## Build Manual
-Eclipse-Tutorial: http://oreonengine.github.io/oreon-engine/_navigation/Getting_Started.html
+* Oreon Engine project uses [lombok](https://projectlombok.org/).
+  Please download the latest [release](https://projectlombok.org/download) of lombok and run the .jar to install lombok plugin into Eclipse.
 
+* Getting started guide for Eclipse available [here](http://oreonengine.github.io/oreon-engine/_navigation/Getting_Started.html).
 
-## Running Oreonworlds Open World Simulation
-* Run apps.oreonworlds.Main as Java Application
+## Running Oreonworlds Open World OpenGL Demo
+* [oe-gl-demo](https://github.com/oreonengine/oreon-engine/tree/master/oreonengine/oe-gl-demo)
+  [OreonWorlds](https://github.com/oreonengine/oreon-engine/blob/master/oreonengine/oe-gl-demo/src/main/java/org/oreon/gl/demo/oreonworlds/Main.java)
 
 <img src="docs/_images/thumbnail4.png" width="500px">
+
+## WIP Vulkan Demo
+* [oe-vk-demo](https://github.com/oreonengine/oreon-engine/tree/master/oreonengine/oe-vk-demo)
+  [SimpleVulkanDemo](https://github.com/oreonengine/oreon-engine/blob/master/oreonengine/oe-vk-demo/src/main/java/org/oreon/vk/demo/SimpleVulkanDemo.java)
 
 ## Camera Control
 * Move: W, A, S, D
@@ -57,3 +64,5 @@ height displacement and Choppy displacement
 
 ### GUI
 ## Credits
+* [Nvidia Corporation](https://developer.nvidia.com/)
+* [World Creator](https://www.world-creator.com/)

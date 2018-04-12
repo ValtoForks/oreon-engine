@@ -1,15 +1,17 @@
 package org.oreon.core.gl.light;
 
+import org.oreon.core.context.EngineContext;
 import org.oreon.core.gl.buffers.GLUBO;
 import org.oreon.core.light.DirectionalLight;
-import org.oreon.core.shadow.PSSMCamera;
-import org.oreon.core.system.CoreSystem;
 import org.oreon.core.util.BufferUtil;
 import org.oreon.core.util.Constants;
 
 public class GLDirectionalLight extends DirectionalLight{
 
 	private static GLDirectionalLight instance = null;
+	
+	private GLUBO ubo_light;
+	private GLUBO ubo_matrices;
 	
 	public static GLDirectionalLight getInstance(){
 		if(instance == null) 
@@ -46,14 +48,28 @@ public class GLDirectionalLight extends DirectionalLight{
 	
 	public void update(){
 		
-		if (CoreSystem.getInstance().getScenegraph().getCamera().isCameraRotated() || 
-				CoreSystem.getInstance().getScenegraph().getCamera().isCameraMoved()){
-			getFloatBufferMatrices().clear();
-			for (PSSMCamera lightCamera : getSplitLightCameras()){
-				lightCamera.update(getM_View(), getUp(), getRight());
-				getFloatBufferMatrices().put(BufferUtil.createFlippedBuffer(lightCamera.getM_orthographicViewProjection()));
-			}
+		super.update();
+		
+		if (EngineContext.getCamera().isCameraRotated() || 
+				EngineContext.getCamera().isCameraMoved()){
+			
 			getUbo_matrices().updateData(getFloatBufferMatrices(), getMatricesBufferSize());
 		}
+	}
+
+	public GLUBO getUbo_light() {
+		return ubo_light;
+	}
+
+	public void setUbo_light(GLUBO ubo_light) {
+		this.ubo_light = ubo_light;
+	}
+
+	public GLUBO getUbo_matrices() {
+		return ubo_matrices;
+	}
+
+	public void setUbo_matrices(GLUBO ubo_matrices) {
+		this.ubo_matrices = ubo_matrices;
 	}
 }

@@ -3,17 +3,17 @@ package org.oreon.modules.gl.postprocessfilter.lensflare;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.oreon.core.context.EngineContext;
 import org.oreon.core.gl.texture.Texture2D;
 import org.oreon.core.light.Light;
 import org.oreon.core.light.LightHandler;
 import org.oreon.core.math.Matrix4f;
 import org.oreon.core.math.Vec2f;
-import org.oreon.core.system.CoreSystem;
 
 public class LensFlare {
 	
 	private List<LensFlareTexturePanel> lensFlareTexturePanels = new ArrayList<LensFlareTexturePanel>();
-	private Vec2f windowMidPos = new Vec2f(CoreSystem.getInstance().getWindow().getWidth()/2f, CoreSystem.getInstance().getWindow().getHeight()/2f);
+	private Vec2f windowMidPos = new Vec2f(EngineContext.getWindow().getWidth()/2f, EngineContext.getWindow().getHeight()/2f);
 	
 	private float occlusionThreshold = 80000f;
 	
@@ -122,7 +122,7 @@ public class LensFlare {
 	
 	public void render(){
 		
-		if (CoreSystem.getInstance().getRenderEngine().isGrid())
+		if (EngineContext.getConfig().isWireframe())
 			return;
 		
 		for (Light light : LightHandler.getLights()){
@@ -135,7 +135,7 @@ public class LensFlare {
 			
 			Vec2f sunToWindowCenter = windowMidPos.sub(lightScreenSpacePos);
 			
-			float brightness = 1 - sunToWindowCenter.div(new Vec2f(CoreSystem.getInstance().getWindow().getWidth(), CoreSystem.getInstance().getWindow().getHeight())).length();
+			float brightness = 1 - sunToWindowCenter.div(new Vec2f(EngineContext.getWindow().getWidth(), EngineContext.getWindow().getHeight())).length();
 			
 			for (LensFlareTexturePanel lensFlareTexture : lensFlareTexturePanels){
 				
