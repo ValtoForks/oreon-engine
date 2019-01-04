@@ -1,6 +1,6 @@
 package org.oreon.core.math;
 
-import org.oreon.core.context.EngineContext;
+import org.oreon.core.context.BaseContext;
 
 public class Transform {
 	
@@ -25,11 +25,26 @@ public class Transform {
 	
 	public Matrix4f getWorldMatrix()
 	{
+		final Matrix4f matrix4f = new Matrix4f();
+		return matrix4f.MakeTransform(translation, rotation, scaling);
+	}
+	
+	public Matrix4f getWorldMatrixRTS(){
+		
 		Matrix4f translationMatrix = new Matrix4f().Translation(translation);
 		Matrix4f rotationMatrix = new Matrix4f().Rotation(rotation);
 		Matrix4f scalingMatrix = new Matrix4f().Scaling(scaling);
 		
-		return translationMatrix.mul(scalingMatrix.mul(rotationMatrix));
+		return rotationMatrix.mul(translationMatrix.mul(scalingMatrix));
+	}
+	
+	public Matrix4f getWorldMatrixSRT(){
+		
+		Matrix4f translationMatrix = new Matrix4f().Translation(translation);
+		Matrix4f rotationMatrix = new Matrix4f().Rotation(rotation);
+		Matrix4f scalingMatrix = new Matrix4f().Scaling(scaling);
+		
+		return scalingMatrix.mul(rotationMatrix.mul(translationMatrix));
 	}
 	
 	public Matrix4f getModelMatrix()
@@ -41,7 +56,7 @@ public class Transform {
 	
 	public Matrix4f getModelViewProjectionMatrix()
 	{
-		return EngineContext.getCamera().getViewProjectionMatrix().mul(getWorldMatrix());
+		return BaseContext.getCamera().getViewProjectionMatrix().mul(getWorldMatrix());
 	}
 
 	public Vec3f getTranslation() {
@@ -78,6 +93,10 @@ public class Transform {
 	
 	public void setScaling(float x, float y, float z) {
 		this.scaling = new Vec3f(x, y, z);
+	}
+	
+	public void setScaling(float s) {
+		this.scaling = new Vec3f(s, s, s);
 	}
 
 	public Vec3f getLocalTranslation() {

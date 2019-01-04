@@ -4,7 +4,9 @@ import org.oreon.core.math.Vec2f;
 import org.oreon.core.math.Vec3f;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 public class Vertex {
 
@@ -13,35 +15,32 @@ public class Vertex {
 	
 	private Vec3f position;
 	private Vec3f normal;
-	private Vec2f textureCoord;
+	private Vec2f uvCoord;
 	private Vec3f tangent;
 	private Vec3f bitangent;
 	
-	private VertexAlignment alignment;
-	
-	public enum VertexAlignment{
+	public enum VertexLayout{
 		
 		POS_NORMAL_UV_TAN_BITAN,
 		POS_NORMAL,
 		POS_UV,
 		POS,
-		POS_NORMAL_UV;
-	}
-	
-	public Vertex(){	
+		POS_NORMAL_UV,
+		POS2D,
+		POS2D_UV;
 	}
 	
 	public Vertex(Vec3f pos)
 	{
 		this.setPosition(pos);
-		this.setTextureCoord(new Vec2f(0,0));
+		this.setUVCoord(new Vec2f(0,0));
 		this.setNormal(new Vec3f(0,0,0));
 	}
 	
 	public Vertex(Vec3f pos, Vec2f texture)
 	{
 		this.setPosition(pos);
-		this.setTextureCoord(texture);
+		this.setUVCoord(texture);
 		this.setNormal(new Vec3f(0,0,0));
 	}
 
@@ -53,14 +52,13 @@ public class Vertex {
 		this.position = pos;
 	}
 
-	public Vec2f getTextureCoord() {
-		return textureCoord;
+	public Vec2f getUVCoord() {
+		return uvCoord;
 	}
 
-	public void setTextureCoord(Vec2f texture) {
-		this.textureCoord = texture;
+	public void setUVCoord(Vec2f uv) {
+		this.uvCoord = uv;
 	}
-
 
 	public Vec3f getNormal() {
 		return normal;

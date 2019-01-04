@@ -4,6 +4,7 @@ import org.oreon.core.math.Vec2f;
 import org.oreon.core.math.Vec3f;
 import org.oreon.core.model.Mesh;
 import org.oreon.core.model.Vertex;
+import org.oreon.core.model.Vertex.VertexLayout;
 
 public class MeshGenerator {
 	
@@ -16,6 +17,7 @@ public class MeshGenerator {
 		vertices[2] = new Vertex(new Vec3f(-1,1,0), new Vec2f(0,1));
 		vertices[3] = new Vertex(new Vec3f(1,1,0), new Vec2f(1,1));
 		Mesh quad = new Mesh(vertices, indices);
+		quad.setVertexLayout(VertexLayout.POS_UV);
 		return quad;
 	}
 	
@@ -28,6 +30,7 @@ public class MeshGenerator {
 		vertices[2] = new Vertex(new Vec3f(-1,1,0), new Vec2f(0,0));
 		vertices[3] = new Vertex(new Vec3f(1,1,0), new Vec2f(1,0));
 		Mesh quad = new Mesh(vertices, indices);
+		quad.setVertexLayout(VertexLayout.POS_UV);
 		return quad;
 	}
 	
@@ -35,7 +38,8 @@ public class MeshGenerator {
 	public static Mesh Cube()
 	{
 		Vertex[] vertices = new Vertex[24];
-		int[] indices = {0,1,2,0,2,3,4,5,6,4,6,7,8,9,10,8,10,11,12,13,14,12,14,15,16,17,18,16,18,19,20,21,22,20,22,23};
+		int[] indices = {0,1,2,0,2,3,4,5,6,4,6,7,8,9,10,8,10,11,12,13,
+				14,12,14,15,16,17,18,16,18,19,20,21,22,20,22,23};
 		
 		vertices[0] = new Vertex(new Vec3f(-1,-1,-1), new Vec2f(0,1));
 		vertices[1] = new Vertex(new Vec3f(-1, 1,-1), new Vec2f(0,0));

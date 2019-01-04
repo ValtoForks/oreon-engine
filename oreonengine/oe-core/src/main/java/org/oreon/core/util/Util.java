@@ -4,9 +4,10 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.oreon.core.math.Quaternion;
+import org.oreon.core.image.ImageMetaData;
 import org.oreon.core.math.Vec2f;
 import org.oreon.core.math.Vec3f;
+import org.oreon.core.math.Vec4f;
 import org.oreon.core.model.Mesh;
 import org.oreon.core.model.Vertex;
 
@@ -54,7 +55,7 @@ public class Util {
 		{
 			vertices[i] = new Vertex();
 			vertices[i].setPosition(new Vec3f(data.get(),data.get(),data.get()));
-			vertices[i].setTextureCoord(new Vec2f(data.get(),data.get()));
+			vertices[i].setUVCoord(new Vec2f(data.get(),data.get()));
 			vertices[i].setNormal(new Vec3f(data.get(),data.get(),data.get()));
 		}
 		
@@ -69,7 +70,7 @@ public class Util {
 		{
 			vertices[i] = new Vertex();
 			vertices[i].setPosition(data.get(i).getPosition());
-			vertices[i].setTextureCoord(data.get(i).getTextureCoord());
+			vertices[i].setUVCoord(data.get(i).getUVCoord());
 			vertices[i].setNormal(data.get(i).getNormal());
 			vertices[i].setTangent(data.get(i).getTangent());
 			vertices[i].setBitangent(data.get(i).getBitangent());
@@ -170,9 +171,9 @@ public class Util {
 		    	Vec3f v1 = mesh.getVertices()[mesh.getIndices()[i+1]].getPosition();
 		    	Vec3f v2 = mesh.getVertices()[mesh.getIndices()[i+2]].getPosition();
 		        
-		    	Vec2f uv0 = mesh.getVertices()[mesh.getIndices()[i]].getTextureCoord();
-		    	Vec2f uv1 = mesh.getVertices()[mesh.getIndices()[i+1]].getTextureCoord();
-		    	Vec2f uv2 = mesh.getVertices()[mesh.getIndices()[i+2]].getTextureCoord();
+		    	Vec2f uv0 = mesh.getVertices()[mesh.getIndices()[i]].getUVCoord();
+		    	Vec2f uv1 = mesh.getVertices()[mesh.getIndices()[i+1]].getUVCoord();
+		    	Vec2f uv2 = mesh.getVertices()[mesh.getIndices()[i+2]].getUVCoord();
 		    	
 		    	Vec3f e1 = v1.sub(v0);
 		    	Vec3f e2 = v2.sub(v0);
@@ -225,7 +226,7 @@ public class Util {
 		    }
 	}
 	
-	public static Quaternion normalizePlane(Quaternion plane)
+	public static Vec4f normalizePlane(Vec4f plane)
 	{
 		float mag;
 		mag = (float) Math.sqrt(plane.getX() * plane.getX() + plane.getY() * plane.getY() + plane.getZ() * plane.getZ());
@@ -248,5 +249,72 @@ public class Util {
 		texCoords[3] = new Vec2f(x_ + 1.0f/16.0f, y_);
 		
 		return texCoords;
+	}
+	
+	public static int[] initBitReversedIndices(int n)
+	{
+		int[] bitReversedIndices = new int[n];
+		int bits = (int) (Math.log(n)/Math.log(2));
+		
+		for (int i = 0; i<n; i++)
+		{
+			int x = Integer.reverse(i);
+			x = Integer.rotateLeft(x, bits);
+			bitReversedIndices[i] = x;
+		}
+		
+		return bitReversedIndices;
+	}
+	
+	public static int getLog2N(int n){
+		
+		return (int) (Math.log(n)/Math.log(2));
+	}
+	
+	public static int getMipLevelCount(ImageMetaData metaData){
+		
+		return getLog2N(metaData.getHeight() < metaData.getWidth() ?
+				metaData.getWidth() : metaData.getHeight());
+	}
+	
+	public static Vec3f[] generateRandomKernel3D(int kernelSize){
+		
+		Vec3f[] kernel = new Vec3f[kernelSize];
+		
+		for (int i=0; i<kernelSize; i++){
+			kernel[i] = new Vec3f((float) Math.random()*2-1,
+								  (float) Math.random()*2-1,
+								  (float) Math.random());
+			kernel[i].normalize();
+			
+			float scale = (float) i / (float) kernelSize;
+			
+			scale = (float) Math.min(Math.max(0.01, scale*scale), 1.0);
+			
+			kernel[i] = kernel[i].mul(scale).mul(-1);
+		}
+		
+		return kernel;
+	}
+
+	public static Vec4f[] generateRandomKernel4D(int kernelSize){
+		
+		Vec4f[] kernel = new Vec4f[kernelSize];
+		
+		for (int i=0; i<kernelSize; i++){
+			kernel[i] = new Vec4f((float) Math.random()*2-1,
+								  (float) Math.random()*2-1,
+								  (float) Math.random(),
+								  0);
+			kernel[i].normalize();
+			
+			float scale = (float) i / (float) kernelSize;
+			
+			scale = (float) Math.min(Math.max(0.01, scale*scale), 1.0);
+			
+			kernel[i] = kernel[i].mul(scale).mul(-1);
+		}
+		
+		return kernel;
 	}
 }

@@ -9,7 +9,7 @@ public class Scenegraph extends Node{
 	private Node water;
 	private Node transparentObjects;
 	
-	private boolean renderTerrain = false;
+	private boolean hasTerrain = false;
 	
 	public Scenegraph(){
 		
@@ -31,6 +31,13 @@ public class Scenegraph extends Node{
 		water.render();
 	}
 	
+	public void renderWireframe(){
+		
+		rootObject.renderWireframe();
+		terrain.renderWireframe();
+		water.renderWireframe();
+	}
+	
 	public void renderTransparentObejcts(){
 		
 		transparentObjects.render();
@@ -41,6 +48,18 @@ public class Scenegraph extends Node{
 		rootObject.renderShadows();
 		terrain.renderShadows();
 		water.renderShadows();
+	}
+	
+	public void record(RenderList renderList){
+
+		rootObject.record(renderList);
+		terrain.record(renderList);
+		water.record(renderList);
+	}
+	
+	public void recordTransparentObjects(RenderList renderList){
+
+		transparentObjects.record(renderList);
 	}
 	
 	public void update(){
@@ -62,6 +81,7 @@ public class Scenegraph extends Node{
 		rootObject.shutdown();
 		terrain.shutdown();
 		water.shutdown();
+		transparentObjects.shutdown();
 	}
 
 	public Node getRoot() {
@@ -78,14 +98,13 @@ public class Scenegraph extends Node{
 
 	public void setTerrain(Node terrain) {
 		terrain.setParent(this);
-		renderTerrain = true;
+		hasTerrain = true;
 		this.terrain = terrain;
 	}
 	
 	public Node getTerrain() {
 		return terrain;
 	}
-
 
 	public Node getWater() {
 		return water;
@@ -96,8 +115,8 @@ public class Scenegraph extends Node{
 		this.water = water;
 	}
 
-	public boolean isRenderTerrain() {
-		return renderTerrain;
+	public boolean hasTerrain() {
+		return hasTerrain;
 	}
 
 	public Node getTransparentObjects() {

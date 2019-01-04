@@ -1,10 +1,20 @@
 package org.oreon.core.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.oreon.core.math.Vec2f;
+import org.oreon.core.model.Vertex.VertexLayout;
+
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class Mesh{
 
 	private Vertex[] vertices;
 	private int[] indices;
 	private int instances;
+	private VertexLayout vertexLayout;
 	private boolean tangentSpace = false;
 	private boolean instanced = false;
 	
@@ -12,6 +22,17 @@ public class Mesh{
 	{
 		this.vertices = vertices;
 		this.indices = indices;
+	}
+	
+	public List<Vec2f> getUvCoords(){
+		
+		ArrayList<Vec2f> uvCoords = new ArrayList<Vec2f>();
+				
+		for (Vertex v : vertices){
+			uvCoords.add(v.getUVCoord());
+		}
+		
+		return uvCoords;
 	}
 
 	public Vertex[] getVertices() {
@@ -52,5 +73,13 @@ public class Mesh{
 
 	public void setInstances(int instances) {
 		this.instances = instances;
+	}
+
+	public VertexLayout getVertexLayout() {
+		return vertexLayout;
+	}
+
+	public void setVertexLayout(VertexLayout vertexLayout) {
+		this.vertexLayout = vertexLayout;
 	}
 }

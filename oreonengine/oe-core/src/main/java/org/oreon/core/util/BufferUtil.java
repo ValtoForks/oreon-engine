@@ -6,14 +6,15 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
 
 import org.lwjgl.BufferUtils;
 import org.oreon.core.math.Matrix4f;
-import org.oreon.core.math.Quaternion;
 import org.oreon.core.math.Vec2f;
 import org.oreon.core.math.Vec3f;
+import org.oreon.core.math.Vec4f;
 import org.oreon.core.model.Vertex;
-import org.oreon.core.model.Vertex.VertexAlignment;
+import org.oreon.core.model.Vertex.VertexLayout;
 
 public class BufferUtil {
 
@@ -71,8 +72,8 @@ public class BufferUtil {
 			buffer.put(vertices[i].getNormal().getX());
 			buffer.put(vertices[i].getNormal().getY());
 			buffer.put(vertices[i].getNormal().getZ());
-			buffer.put(vertices[i].getTextureCoord().getX());
-			buffer.put(vertices[i].getTextureCoord().getY());
+			buffer.put(vertices[i].getUVCoord().getX());
+			buffer.put(vertices[i].getUVCoord().getY());
 			
 			if (vertices[i].getTangent() != null && vertices[i].getBitangent() != null){
 				buffer.put(vertices[i].getTangent().getX());
@@ -109,8 +110,8 @@ public class BufferUtil {
 			
 		for(int i = 0; i < vertices.length; i++)
 		{
-			buffer.put(vertices[i].getTextureCoord().getX());
-			buffer.put(vertices[i].getTextureCoord().getY());
+			buffer.put(vertices[i].getUVCoord().getX());
+			buffer.put(vertices[i].getUVCoord().getY());
 		}	
 		
 		buffer.flip();
@@ -134,7 +135,7 @@ public class BufferUtil {
 		return buffer;
 	}
 	
-	public static FloatBuffer createFlippedBuffer(Quaternion[] vector)
+	public static FloatBuffer createFlippedBuffer(Vec4f[] vector)
 	{
 		FloatBuffer buffer = createFloatBuffer(vector.length * Float.BYTES * 4);
 		
@@ -164,7 +165,19 @@ public class BufferUtil {
 		return buffer;
 	}
 	
-	public static FloatBuffer createFlippedBuffer(Quaternion vector)
+	public static FloatBuffer createFlippedBuffer(Vec2f vector)
+	{
+		FloatBuffer buffer = createFloatBuffer(Float.BYTES * 2);
+		
+		buffer.put(vector.getX());
+		buffer.put(vector.getY());
+		
+		buffer.flip();
+		
+		return buffer;
+	}
+	
+	public static FloatBuffer createFlippedBuffer(Vec4f vector)
 	{
 		FloatBuffer buffer = createFloatBuffer(Float.BYTES * 4);
 		
@@ -186,6 +199,21 @@ public class BufferUtil {
 		{
 			buffer.put(vector[i].getX());
 			buffer.put(vector[i].getY());	
+		}
+		
+		buffer.flip();
+		
+		return buffer;
+	}
+	
+	public static FloatBuffer createFlippedBuffer(List<Vec2f> vector)
+	{
+		FloatBuffer buffer = createFloatBuffer(vector.size() * Float.BYTES * 2);
+		
+		for (Vec2f v : vector)
+		{
+			buffer.put(v.getX());
+			buffer.put(v.getY());	
 		}
 		
 		buffer.flip();
@@ -230,58 +258,84 @@ public class BufferUtil {
 		return byteBuffer;
 	}
 	
-	public static ByteBuffer createByteBuffer(Vertex[] vertices, VertexAlignment alignment){
+	public static ByteBuffer createByteBuffer(Vec2f[] vertices){
 		
-		ByteBuffer byteBuffer = allocateVertexByteBuffer(alignment, vertices.length);
+		ByteBuffer byteBuffer = memAlloc(Float.BYTES * 2 * vertices.length);
 		FloatBuffer floatBuffer = byteBuffer.asFloatBuffer();
-		putVertices(alignment, floatBuffer, vertices);
 		
-		return byteBuffer;
-	}
-	
-	public static ByteBuffer allocateVertexByteBuffer(VertexAlignment alignment, int vertexCount){
-		
-		ByteBuffer byteBuffer;
-		
-		switch(alignment){
-			case POS: byteBuffer = memAlloc(Float.BYTES * 3 * vertexCount);
-			case POS_UV: byteBuffer = memAlloc(Float.BYTES * 5 * vertexCount);
-			case POS_NORMAL: byteBuffer = memAlloc(Float.BYTES * 6 * vertexCount);
-			case POS_NORMAL_UV: byteBuffer = memAlloc(Float.BYTES * 8 * vertexCount);
-			case POS_NORMAL_UV_TAN_BITAN: byteBuffer = memAlloc(Float.BYTES * 14 * vertexCount);
-			default: byteBuffer = memAlloc(0);
+		for(int i = 0; i < vertices.length; i++) {
+			floatBuffer.put(vertices[i].getX());
+			floatBuffer.put(vertices[i].getY());
 		}
-		
+
 		return byteBuffer;
 	}
 	
-	public static void putVertices(VertexAlignment alignment, FloatBuffer floatBuffer, Vertex[] vertices){
+	public static ByteBuffer createByteBuffer(Vec3f[] vertices){
 		
+		ByteBuffer byteBuffer = memAlloc(Float.BYTES * 3 * vertices.length);
+		FloatBuffer floatBuffer = byteBuffer.asFloatBuffer();
+		
+		for(int i = 0; i < vertices.length; i++) {
+			floatBuffer.put(vertices[i].getX());
+			floatBuffer.put(vertices[i].getY());
+			floatBuffer.put(vertices[i].getZ());
+		}
+
+		return byteBuffer;
+	}
+	
+	public static ByteBuffer createByteBuffer(Vec4f[] vertices){
+		
+		ByteBuffer byteBuffer = memAlloc(Float.BYTES * 4 * vertices.length);
+		FloatBuffer floatBuffer = byteBuffer.asFloatBuffer();
+		
+		for(int i = 0; i < vertices.length; i++) {
+			floatBuffer.put(vertices[i].getX());
+			floatBuffer.put(vertices[i].getY());
+			floatBuffer.put(vertices[i].getZ());
+			floatBuffer.put(vertices[i].getW());
+		}
+
+		return byteBuffer;
+	}
+	
+	public static ByteBuffer createByteBuffer(Vertex[] vertices, VertexLayout layout){
+		
+		ByteBuffer byteBuffer = allocateVertexByteBuffer(layout, vertices.length);
+		FloatBuffer floatBuffer = byteBuffer.asFloatBuffer();
+
 		for(int i = 0; i < vertices.length; i++)
 		{
+			if (layout == VertexLayout.POS2D || 
+				layout == VertexLayout.POS2D_UV){
+				floatBuffer.put(vertices[i].getPosition().getX());
+				floatBuffer.put(vertices[i].getPosition().getY());
+			}
+			else {
+				floatBuffer.put(vertices[i].getPosition().getX());
+				floatBuffer.put(vertices[i].getPosition().getY());
+				floatBuffer.put(vertices[i].getPosition().getZ());
+			}
 			
-			floatBuffer.put(vertices[i].getPosition().getX());
-			floatBuffer.put(vertices[i].getPosition().getY());
-			floatBuffer.put(vertices[i].getPosition().getZ());
-			
-			if (alignment == VertexAlignment.POS_NORMAL ||
-				alignment == VertexAlignment.POS_NORMAL_UV ||
-				alignment == VertexAlignment.POS_NORMAL_UV_TAN_BITAN){
+			if (layout == VertexLayout.POS_NORMAL ||
+				layout == VertexLayout.POS_NORMAL_UV ||
+				layout == VertexLayout.POS_NORMAL_UV_TAN_BITAN){
 				
 				floatBuffer.put(vertices[i].getNormal().getX());
 				floatBuffer.put(vertices[i].getNormal().getY());
 				floatBuffer.put(vertices[i].getNormal().getZ());
 			}
 			
-			if (alignment == VertexAlignment.POS_NORMAL_UV ||
-				alignment == VertexAlignment.POS_UV ||
-				alignment == VertexAlignment.POS_NORMAL_UV_TAN_BITAN){
-				
-				floatBuffer.put(vertices[i].getTextureCoord().getX());
-				floatBuffer.put(vertices[i].getTextureCoord().getY());
+			if (layout == VertexLayout.POS_NORMAL_UV ||
+				layout == VertexLayout.POS_UV ||
+				layout == VertexLayout.POS_NORMAL_UV_TAN_BITAN ||
+				layout == VertexLayout.POS2D_UV){
+				floatBuffer.put(vertices[i].getUVCoord().getX());
+				floatBuffer.put(vertices[i].getUVCoord().getY());
 			}
 			
-			if (alignment == VertexAlignment.POS_NORMAL_UV_TAN_BITAN){
+			if (layout == VertexLayout.POS_NORMAL_UV_TAN_BITAN){
 				
 				floatBuffer.put(vertices[i].getTangent().getX());
 				floatBuffer.put(vertices[i].getTangent().getY());
@@ -291,6 +345,82 @@ public class BufferUtil {
 				floatBuffer.put(vertices[i].getBitangent().getZ());
 			}
 		}
+		
+		return byteBuffer;
 	}
-
+	
+	public static ByteBuffer createByteBuffer(int... values){
+		
+		ByteBuffer byteBuffer = memAlloc(Integer.BYTES * values.length);
+		IntBuffer intBuffer = byteBuffer.asIntBuffer();
+		intBuffer.put(values);
+		intBuffer.flip();
+		
+		return byteBuffer;
+	}
+	
+	public static ByteBuffer createByteBuffer(float... values){
+		
+		ByteBuffer byteBuffer = memAlloc(Float.BYTES * values.length);
+		FloatBuffer intBuffer = byteBuffer.asFloatBuffer();
+		intBuffer.put(values);
+		intBuffer.flip();
+		
+		return byteBuffer;
+	}
+	
+	public static ByteBuffer createByteBuffer(FloatBuffer floatBuffer){
+		
+		ByteBuffer byteBuffer = memAlloc(Float.BYTES * floatBuffer.limit());
+		FloatBuffer intBuffer = byteBuffer.asFloatBuffer();
+		intBuffer.put(floatBuffer);
+		intBuffer.flip();
+		
+		return byteBuffer;
+	}
+	
+	public static ByteBuffer createByteBuffer(Vec2f vector){
+		
+		return createByteBuffer(createFlippedBuffer(vector));
+	}
+	
+	public static ByteBuffer allocateVertexByteBuffer(VertexLayout layout, int vertexCount){
+		
+		ByteBuffer byteBuffer;
+		
+		switch(layout){
+			case POS2D:
+				byteBuffer = memAlloc(Float.BYTES * 2 * vertexCount);
+				break;
+			case POS:
+				byteBuffer = memAlloc(Float.BYTES * 3 * vertexCount);
+				break;
+			case POS_UV:
+				byteBuffer = memAlloc(Float.BYTES * 5 * vertexCount);
+				break;
+			case POS2D_UV:
+				byteBuffer = memAlloc(Float.BYTES * 4 * vertexCount);
+				break;
+			case POS_NORMAL:
+				byteBuffer = memAlloc(Float.BYTES * 6 * vertexCount);
+				break;
+			case POS_NORMAL_UV:
+				byteBuffer = memAlloc(Float.BYTES * 8 * vertexCount);
+				break;
+			case POS_NORMAL_UV_TAN_BITAN:
+				byteBuffer = memAlloc(Float.BYTES * 14 * vertexCount);
+				break;
+			default:
+				byteBuffer = memAlloc(0);
+		}
+		return byteBuffer;
+	}
+	
+	public static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
+        ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
+        buffer.flip();
+        newBuffer.put(buffer);
+        return newBuffer;
+	}
+	
 }
